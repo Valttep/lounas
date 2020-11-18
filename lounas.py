@@ -1,17 +1,36 @@
 import requests
 import json
 import re
+import datetime
+import sys
 
-piha = json.loads(requests.get("https://www.ravintolapiha.fi/page-data/lounas/page-data.json").text)
+piha = json.loads(requests.get(
+    "https://www.ravintolapiha.fi/page-data/lounas/page-data.json").text)
 pihaWeek = piha["result"]["data"]["contentfulPage"]["contentBlocks"].copy()
 
+todayDate = datetime.datetime.now().strftime("%d.%m")
+
+
 def cleanhtml(raw_html):
-  cleanr = re.compile('<.*?>')
-  cleantext = re.sub(cleanr, '', raw_html)
-  return cleantext
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
+
+
+print("--------------------------------------------------")
 
 for lunchOfTheDay in pihaWeek:
-  print(lunchOfTheDay["title"])
-  print(cleanhtml(lunchOfTheDay["body"]["childMarkdownRemark"]["html"]))
-  print("--------------------------------------------------")
 
+    startOfDateInfo = re.search(r"\d", str(lunchOfTheDay["title"])).start()
+    endOfDateInfo = len(lunchOfTheDay["title"])
+    if len(sys.argv) > 1:
+        if sys.argv[1].lower() == "-d" and str(lunchOfTheDay["title"])[startOfDateInfo: endOfDateInfo] == todayDate:
+            print(lunchOfTheDay["title"])
+            print(cleanhtml(lunchOfTheDay["body"]
+                            ["childMarkdownRemark"]["html"]))
+            print("--------------------------------------------------")
+    else:
+        print(lunchOfTheDay["title"])
+        print(cleanhtml(lunchOfTheDay["body"]["childMarkdownRemark"]["html"]))
+        print("--------------------------------------------------")
+        print()
