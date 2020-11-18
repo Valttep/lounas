@@ -14,6 +14,7 @@ todayDate = datetime.datetime.now().strftime("%d.%m")
 def cleanhtml(raw_html):
     cleanr = re.compile('<.*?>')
     cleantext = re.sub(cleanr, '', raw_html)
+    cleantext = re.sub("&#x26;", "\x26", cleantext)
     return cleantext
 
 
