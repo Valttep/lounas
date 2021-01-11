@@ -8,7 +8,9 @@ piha = json.loads(requests.get(
     "https://www.ravintolapiha.fi/page-data/lounas/page-data.json").text)
 pihaWeek = piha["result"]["data"]["contentfulPage"]["contentBlocks"].copy()
 
-todayDate = datetime.datetime.now().strftime("%d.%m").lstrip("0")
+day = datetime.datetime.now().strftime("%d").lstrip("0")
+month = datetime.datetime.now().strftime("%m").lstrip("0")
+todayDate = day + "." + month
 
 
 def cleanhtml(raw_html):
